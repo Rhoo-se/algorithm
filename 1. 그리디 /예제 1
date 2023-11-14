@@ -1,0 +1,14 @@
+from collections import deque
+import sys
+
+N = int(sys.stdin.readline().strip())
+cnt = 0
+cnt += N // 500
+N = N % 500
+cnt += N // 100
+N = N % 100
+cnt += N // 50
+N = N % 50
+cnt += N // 10
+
+print(cnt)
