@@ -1,0 +1,19 @@
+from collections import deque
+import sys
+
+N = int(sys.stdin.readline().strip())
+gage = list(map(int, sys.stdin.readline().split()))
+gage.sort()
+max_gage = -1
+cnt = 0
+team = []
+for i in range(0, N):
+    if gage[i] > max_gage:
+        max_gage = gage[i]
+    team.append(gage[i])
+    if len(team) == max_gage:
+        cnt = cnt + 1
+        team = []
+        max_gage = -1
+
+print(cnt)
