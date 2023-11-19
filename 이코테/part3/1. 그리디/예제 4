@@ -1,0 +1,17 @@
+from collections import deque
+import sys
+
+N = int(input())
+coin = list(map(int, input().split()))
+coin.sort()
+
+target = 1
+for i in coin:
+    if target < i:
+        break
+    target += i
+
+print(target)
+
+
+# 답지를 참조함!
