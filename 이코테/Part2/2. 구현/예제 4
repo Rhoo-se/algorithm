@@ -1,0 +1,31 @@
+from collections import deque
+import sys
+import heapq
+
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+cnt = 1
+def dfs(x, y, d):
+    global cnt
+    for i in range(4):
+        m = (d + i) % 4
+        nx = x + dx[m]
+        ny = y + dy[m]
+
+        if nx < 0 or nx >= N or ny < 0 or ny >= M:
+            continue
+        if graph[nx][ny] == 0:
+            graph[nx][ny] = 1
+            cnt += 1
+            dfs(nx, ny, m)
+
+N, M = map(int, sys.stdin.readline().split())
+A, B, d = map(int, sys.stdin.readline().split())
+graph = []
+for i in range(N):
+    graph.append(list(map(int, sys.stdin.readline().split())))
+
+graph[A][B] = 1
+dfs(A, B, d)
+print(cnt)
+
