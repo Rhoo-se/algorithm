@@ -1,0 +1,22 @@
+from collections import deque
+import sys
+import heapq
+
+N = int(sys.stdin.readline().strip())
+move = list(sys.stdin.readline().split())
+a,b = 1, 1
+for i in move:
+    if i == 'L':
+        if b != 1:
+            b = b -1
+    if i == 'R':
+        if b != N-1:
+            b = b + 1
+    if i == 'U':
+        if a != 1:
+            a = a - 1
+    if i == 'D':
+        if a != N-1:
+            a = a + 1
+print(a, b)
+
