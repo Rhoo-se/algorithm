@@ -16,3 +16,10 @@ for i in q:
     print(i, end='')
 
 
+//// 숫자가 아예 들어오지 않는 경우도 고려해야 하므로 
+q.sort()
+if sum !=0:
+    q.append(str(sum))
+for i in q:
+    print(i, end='')
+다음과 같이 수정해줘야함!
