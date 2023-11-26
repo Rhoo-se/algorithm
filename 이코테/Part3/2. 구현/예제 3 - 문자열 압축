@@ -33,3 +33,5 @@ for i in range(1, h_len + 1):
 for i in range(h_len):
     arr_len.append(len(arr[i]))
 print(min(arr_len))
+
+### 런타임에러 발생
