@@ -4,21 +4,32 @@ import heapq
 
 S = sys.stdin.readline().strip()
 R = ''
-tmp = []
 arr = []
+arr_len = []
 h_len = len(S) // 2
-for i in range(1, h_len+1):
-    for j in range(0, len(S) - i):
-        SS = S[j: i]
-        for k in range(i, len(S) - i):
-            cnt = 0
-            C = S[k: i]
-            while SS != C:
-                k = k + i
-                cnt += 1
-            if cnt >= 1:
-                R = R + str(cnt) + SS
-            else:
-                R = R + S[k]
-        arr.append(R)
-        R = ''
+SS = ''
+C = ''
+for i in range(1, h_len + 1):
+    SS = S[0:i]
+    j = 0
+    while j < len(S) - i:
+        k = j+i
+        C = S[k:k+i]
+        cnt = 0
+        while SS == C:
+            k += i
+            C = S[k:k+i]
+            cnt += 1
+        j = k
+        if cnt >= 1:
+            R += str(cnt+1) + SS
+        else:
+            R += SS
+        SS = C
+    R += C
+    arr.append(R)
+    R = ''
+
+for i in range(h_len):
+    arr_len.append(len(arr[i]))
+print(min(arr_len))
