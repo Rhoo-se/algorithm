@@ -1,0 +1,32 @@
+from collections import *
+import sys
+import heapq
+
+N, M, K, X = map(int, sys.stdin.readline().split())
+global cnt
+cnt = 0
+
+graph = [[] for _ in range(N+1)]
+visited = [False] * (N+1)
+distance = [-1] * (N+1)
+distance[X] = 0
+for i in range(M):
+    A, B = map(int, sys.stdin.readline().split())
+    graph[A].append(B)
+
+def bfs(X):
+    q = deque([X])
+    while q:
+        v = q.popleft()
+        for i in graph[v]:
+            if distance[i] == -1:
+                q.append(i)
+                distance[i] = distance[v] + 1
+
+flag = False
+for i in distance:
+    if i == K:
+        print(i)
+        flag = True
+if flag == False:
+    print(-1)
