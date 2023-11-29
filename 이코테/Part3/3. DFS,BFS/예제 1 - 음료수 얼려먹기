@@ -1,0 +1,30 @@
+from collections import *
+import sys
+import heapq
+
+graph = []
+
+N, M = map(int, sys.stdin.readline().split())
+
+for i in range(N):
+    l = list(map(int, sys.stdin.readline().strip()))
+    graph.append(l)
+
+def dfs(x, y):
+    if x <= -1 or x >= N  or y <= -1 or y >= M:
+        return False
+    if graph[x][y] == 0:
+        graph[x][y] = 1
+        dfs(x - 1, y)
+        dfs(x, y - 1)
+        dfs(x + 1, y)
+        dfs(x, y + 1)
+        return True
+    return False
+
+cnt = 0
+for i in range(N):
+    for j in range(M):
+        if dfs(i, j) == True:
+            cnt += 1
+print(cnt)
