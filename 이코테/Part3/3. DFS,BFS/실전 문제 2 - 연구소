@@ -9,64 +9,69 @@ graph = []
 empty = []
 virus = []
 q = deque()
+w = deque()
+global cnt
+cnt = 0
+result = 0
+dx = [0, 0, -1, 1]
+dy = [1, -1, 0, 0]
 
 for i in range(N):
-    graph.append(list(map(int, sys.stdin.readline().strip())))
+    graph.append(list(map(int, sys.stdin.readline().split())))
 
-for i in range(N): #그래프 상태 저장(비어있는 곳, 바이러스 찾음)
+for i in range(N):  # 그래프 상태 저장(비어있는 곳, 바이러스 찾음)
     for j in range(M):
         if graph[i][j] == 2:
             q.append([i, j])
         if graph[i][j] == 0:
             empty.append([i, j])
 
-1. 그래프의 빈 곳을 찾는다
-2. 비어있는 곳 중 3개를 선택하여 벽을 세운다(벽은 1)
-3. 바이러스의 좌표로부터 bfs를 통해 바이러스를 확산시킨다
-4. 나머지 비어있는 원소를 반복문을 통해 bfs를 돌려 0으로 채워진 최대 안전영역의 크기를 구한다
-
-
-
-def add_wall(graph, x, y):
-    chosen_empty = combinations(graph,3)
-    for i in chosen_empty: # ((1, 2), (2, 3), (1, 4)),
-        for j in i: # (1, 2), (2, 3), (1, 4)
-            graph[j[0]][j[1]] = 1
-
-
-    for i in empty:
-        if graph[i[0]][i[1]] == 1:
-            continue
-        else:
-            save_area
-
 def infect(graph):
-    dx = [0, 0, -1, 1]
-    dy = [1, -1, 0, 0]
     while q:
         x, y = q.popleft()
         for i in range(4):
-            nx = x + dx
-            ny = y + dy
-            if nx <0 or nx >=N or ny < 0 or ny >= M:
+            nx = x + dx[i]
+            ny = y + dy[i]
+            if nx < 0 or nx >= N or ny < 0 or ny >= M:
                 continue
             if graph[nx][ny] == 1 or graph[nx][ny] == 2:
                 continue
             if graph[nx][ny] == 0:
                 graph[nx][ny] = 2
                 q.append([nx, ny])
-            
-def save_area(graph, x, y):
-    for i in empty:
-        if graph[i[0]][i[1]] == 1:
-            continue
-        else:
+def save_area(x, y):
+    global cnt
+    w.append((x, y))
+    while w:
+        x,y = w.popleft()
+        for i in range(4):
+            nx = x + dx[i]
+            ny = y + dy[i]
+            if nx < 0 or nx >= N or ny < 0 or ny >= M:
+                continue
+            if graph[nx][ny] == 1 or graph[nx][ny] == 2 or graph[nx][ny] == -1 :
+                continue
+            if graph[nx][ny] == 0:
+                graph[nx][ny] = -1
+                w.append((nx, ny))
+                cnt += 1
 
-    
-        
+chosen_empty = combinations(graph, 3)
 
-a = [1, 2, 3, 4]
-c_a = combinations(a, 3)
-print(list(c_a))
+for i in chosen_empty:
+    for j in i:
+        new_graph = copy.deepcopy(graph)
+        new_graph[j[0]][j[1]] = 1
+        infect(new_graph)
+        cnt = 0
+        for n in range(N):
+            for m in range(M):
+                if new_graph[n][m] == 0:
+                    save_area(n, m)
+                if cnt >= result:
+                    result = cnt
+                    cnt = 0
 
-#삼성 코테에서는 sys, itertools등의 내장함수 사용 불가하므로 순열, 조합에 직접 구현 해보기
+
+print(result)
+# 삼성 코테에서는 sys, itertools등의 내장함수 사용 불가하므로 순열, 조합에 직접 구현 해보기
