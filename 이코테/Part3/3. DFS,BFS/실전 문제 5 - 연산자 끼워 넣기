@@ -1,0 +1,55 @@
+from collections import *
+import sys
+import heapq
+import copy
+from itertools import *
+
+N = int(sys.stdin.readline())
+A = list(map(int, sys.stdin.readline().split()))
+opr_cnt = list(map(int, sys.stdin.readline().split()))
+opr = []
+max_rst = 0
+min_rst = 0
+crn = A[0]
+for i in range(4):
+    for j in range(opr_cnt[i]):
+        if i == 0:
+            opr.append('+')
+        elif i == 1:
+            opr.append('-')
+        elif i == 2:
+            opr.append('*')
+        else:
+            opr.append('/')
+
+p = set(permutations(opr, N-1)) # 중복 제거
+p = list(p)
+
+for i in range(len(p)):
+    k = 0
+    crn = A[0]
+    for j in range(N-1):
+        if p[i][j] == '+':
+            crn += A[k+1]
+            k += 1
+        elif p[i][j] == '-':
+            crn -= A[k+1]
+            k += 1
+        elif p[i][j] == '*':
+            crn *= A[k+1]
+            k += 1
+        elif p[i][j] == '/':
+            crn //= A[k+1]
+            k += 1
+            if crn < 0:
+                crn += 1
+    if i == 0:
+        max_rst = crn
+        min_rst = crn
+    else:
+        if max_rst <= crn:
+            max_rst = crn
+        if min_rst >= crn:
+            min_rst = crn
+print(max_rst)
+print(min_rst)
