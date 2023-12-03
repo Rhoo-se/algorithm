@@ -10,7 +10,6 @@ student = []
 obstacle = []
 blank = []
 flag = ''
-ok = 0
 dx = [-1, 1, 0, 0]
 dy = [0, 0, -1, 1]
 
@@ -19,10 +18,12 @@ def check(graph): # graph 받아서 감시 피할 수 있는지
         for j in range(4):
             x = student[i][0]
             y = student[i][1]
+            nx = x
+            ny = y
             for k in range(1, N-1):
-                nx = x + dx[j]
-                ny = y + dy[j]
-                if nx < 0 or nx >= N or ny < 0 or ny >= 0:
+                nx += dx[j]
+                ny += dy[j]
+                if nx < 0 or nx >= N or ny < 0 or ny >= N:
                     break
                 if graph[nx][ny] == 'O':
                     break
@@ -56,12 +57,13 @@ for i in range(len(c)):
     for j in range(3):
         x = c[i][j][0]
         y = c[i][j][1]
-        new_graph[x][y] = 'X'
+        new_graph[x][y] = 'O'
     flag = check(new_graph)
     if flag == 'YES':
-        ok = 1
-if ok == 1:
-    print("YES")
-else:
-    print("NO")
+        print("YES")
+        exit(0)
+print("NO")
+
+
+
 
