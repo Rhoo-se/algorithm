@@ -1,0 +1,10 @@
+import sys
+from collections import deque
+import copy
+
+N = int(sys.stdin.readline().strip())
+arr = []
+for i in range(N):
+    arr.append(int(sys.stdin.readline().strip()))
+arr.sort(key = lambda x:-x)
+print(arr)
