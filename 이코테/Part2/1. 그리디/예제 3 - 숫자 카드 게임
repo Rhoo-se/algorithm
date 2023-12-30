@@ -1,0 +1,12 @@
+from collections import deque
+import sys
+
+N, M = map(int, sys.stdin.readline().split())
+arr = []
+max_arr = []
+for i in range(N):
+arr.append(list(map(int, sys.stdin.readline().split())))
+for i in range(N):
+max_arr.append(max(arr[i]))
+k = max_arr.index(min(max_arr))
+print(arr[k][0])
