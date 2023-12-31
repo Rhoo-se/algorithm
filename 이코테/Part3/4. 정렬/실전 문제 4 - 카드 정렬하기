@@ -1,0 +1,23 @@
+import sys
+from collections import deque
+import copy
+import heapq
+
+N = int(sys.stdin.readline().strip())
+hq = []
+sum = 0
+
+for i in range(N):
+    a = int(sys.stdin.readline().strip())
+    heapq.heappush(hq, a)
+if N == 1:
+    print(0)
+    exit()
+while len(hq) != 1:
+    a = heapq.heappop(hq)
+    b = heapq.heappop(hq)
+    c = a + b
+    sum += c
+    heapq.heappush(hq, c)
+print(sum)
+
