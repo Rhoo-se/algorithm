@@ -1,0 +1,26 @@
+import sys
+from collections import deque
+import bisect
+
+N = int(sys.stdin.readline().strip())
+l = list(map(int, sys.stdin.readline().split()))
+
+start = 0
+end = N-1
+mid = (start+end)//2
+flag = 0
+while start <= end:
+    if l[mid] == mid:
+        flag = 1
+        print(l[mid])
+        break
+    if l[mid] > mid:
+        end = mid
+        mid = (start + end) // 2
+    if l[mid] < mid:
+        start = mid
+        mid = (start + end) // 2
+    if end - start == 1:
+        break
+if flag == 0:
+    print(-1)
