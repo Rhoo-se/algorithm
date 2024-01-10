@@ -15,11 +15,10 @@ for _ in range(T):
     for i in range(0, n):
         dp[i][0] = graph[i][0] # dp리스트의 1열 초기화
     for i in range(1, m):
-        dp[0][i] = max(dp[0][i-1] + graph[0][i], dp[1][i-1] + graph[0][i])
-        for j in range(1, n-1):
+        dp[0][i] = max(dp[0][i-1] + graph[0][i], dp[1][i-1] + graph[0][i]) # 1행 의 경우
+        for j in range(1, n-1): # 2~n-1행의 경우
             dp[j][i] = max(dp[j-1][i-1] + graph[j][i], dp[j][i-1] + graph[j][i], dp[j+1][i-1] + graph[j][i])
-        dp[n-1][i] = max(dp[n-1][i-1] + graph[n-1][i],dp[n-2][i-1] + graph[n-1][i])
-    print(dp)
+        dp[n-1][i] = max(dp[n-1][i-1] + graph[n-1][i],dp[n-2][i-1] + graph[n-1][i]) # n행의 경우
     for i in range(0, n):
         if max_val < dp[i][m-1]:
             max_val = dp[i][m-1]
