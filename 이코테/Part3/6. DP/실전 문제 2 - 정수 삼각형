@@ -1,0 +1,24 @@
+import sys
+from collections import deque
+import bisect
+
+n = int(sys.stdin.readline().strip())
+tri = []
+dp = []
+for i in range(n):
+    tri.append(list(map(int, sys.stdin.readline().split())))
+for i in range(1, n+1):
+    dp.append([-1]*i)
+
+dp[0][0] = tri[0][0] # 1행 초기화
+
+for i in range(1, n): # 행
+    for j in range(0, i+1): # 열
+        if j == 0:
+            dp[i][j] = dp[i-1][j] + tri[i][j]
+            continue
+        if j == i:
+            dp[i][j] = dp[i-1][j-1] + tri[i][j]
+            continue
+        dp[i][j] = max(dp[i-1][j-1] + tri[i][j], dp[i-1][j] + tri[i][j])
+print(max(dp[n-1]))
