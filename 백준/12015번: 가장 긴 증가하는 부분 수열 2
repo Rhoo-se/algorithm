@@ -1,0 +1,30 @@
+import copy
+import sys
+from collections import deque
+import bisect
+
+x = int(input())
+arr = list(map(int, input().split()))
+
+dp = [arr[0]]
+
+for i in range(x):
+    if arr[i] > dp[-1]:
+        dp.append(arr[i])
+    else:
+        idx = bisect.bisect_left(dp, arr[i])
+        dp[idx] = arr[i]
+print(dp)
+print(len(dp))
+
+"""
+예를 들어 arr = [10, 20, 60, 40, 50] 이라고 하자.
+이 때 최대값 갱신만 해준다면 dp = [10, 20, 60] 이 될것이다.
+그런데 해당 예시에서 LIS의 답은 [10, 20, 40, 50]이다. 
+위의 예시처럼 20 초과 60 미만의 값이 그 뒤에 나오게 된다면 그것을 고려해 주는 방법을 생각해야 하는데, 
+그것이 bisect로 최대의 인덱스에 해당하는 값을 교체 해 주는 것이다.
+
+만약 arr = [10, 20, 60, 15, 25, 35]라고 가정하자.
+그렇다면 LIS = [10, 20, 25, 35]가 답인데, 
+bisect로 인덱스에 해당하는 값을 교체해 주면, LIS = [10, 15, 25, 35]가 되어 답은 다르다. 하지만 길이는 같다.
+"""
