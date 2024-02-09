@@ -1,0 +1,46 @@
+import copy
+import heapq
+import sys
+from collections import deque
+import bisect
+
+input =sys.stdin.readline
+
+#0 -> union, 1 -> find
+N, M = map(int, input().split())
+parent = [0] * (N+1)
+
+for i in range(1, N+1):
+    parent[i] = i
+def find_parent(parent, x):
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+
+def union_parent(parent, a, b):
+    a = find_parent(parent, a)
+    b = find_parent(parent, b)
+    if a < b:
+        parent[b] = a
+    else:
+        parent[a] = b
+
+def same_team(a, b):
+    if parent[a] == parent[b]:
+        print("YES")
+    else:
+        print("NO")
+
+
+
+for i in range(M):
+    x, y, z = map(int, input().split())
+    if x == 1:
+        same_team(y, z)
+    else:
+        union_parent(parent, y, z)
+        if y > z:
+            find_parent(parent, y)
+        else:
+            find_parent(parent, z)
+    print(parent)
