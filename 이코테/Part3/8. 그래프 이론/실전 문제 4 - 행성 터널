@@ -1,0 +1,53 @@
+import copy
+import heapq
+import sys
+from collections import deque
+import bisect
+
+def find_parent(parent, x):
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+
+def union_parent(parent, a, b):
+    a = find_parent(parent, a)
+    b = find_parent(parent, b)
+    if a > b:
+        parent[a] = b
+    else:
+        parent[b] = a
+
+input = sys.stdin.readline
+N = int(input().strip())
+
+parent = [0] * (N+1)
+for i in range(1, N+1):
+    parent[i] = i
+
+graph = [[] for _ in range(N+1)]
+edges = []
+a = []
+b = []
+c = []
+
+for i in range(N):
+    x, y, z = map(int, input().split())
+    a.append((x, i))
+    b.append((y, i))
+    c.append((z, i))
+a.sort()
+b.sort()
+c.sort()
+for i in range(N-1):
+    edges.append((a[i+1][0]-a[i][0], a[i][1], a[i+1][1]))
+    edges.append((b[i+1][0]-b[i][0], b[i][1], b[i+1][1]))
+    edges.append((c[i+1][0]-c[i][0], c[i][1], c[i+1][1]))
+edges.sort()
+rst = 0
+
+for edge in edges:
+    z, x, y = edge
+    if find_parent(parent, x) != find_parent(parent, y):
+        union_parent(parent, x, y)
+        rst += z
+print(rst)
