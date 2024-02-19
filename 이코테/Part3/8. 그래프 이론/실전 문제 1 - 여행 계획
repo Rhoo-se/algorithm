@@ -1,0 +1,50 @@
+import copy
+import heapq
+import sys
+from collections import deque
+import bisect
+
+input = sys.stdin.readline
+N = int(input().strip())
+M = int(input().strip())
+graph = []
+parent = [0] * (N+1)
+
+def find_parent(parent, x):
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+
+def union_parent(parent, a, b):
+    a = find_parent(parent, a)
+    b = find_parent(parent, b)
+    if a < b:
+        parent[b] = a
+    else:
+        parent[a] = b
+
+for i in range(1, N+1):
+    parent[i] = i
+
+for _ in range(N):
+    l = list(map(int, input().split()))
+    graph.append(l)
+
+for i in range(N):
+    for j in range(N):
+        if graph[i][j] == 1:
+            union_parent(parent, i+1, j+1)
+
+plan = list(map(int, input().split()))
+min_val = min(plan)
+
+
+flag = 0
+for i in plan:
+    if parent[i] != parent[min_val]:
+        print("NO")
+        flag = 1
+        break
+
+if flag == 0:
+    print("YES")
