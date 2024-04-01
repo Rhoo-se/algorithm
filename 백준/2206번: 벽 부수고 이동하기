@@ -1,0 +1,43 @@
+from sys import stdin
+from collections import deque
+import sys
+
+input = sys.stdin.readline
+N, M = map(int, input().split())
+graph = []
+
+for i in range(N):
+    l = list(map(int, input().strip()))
+    graph.append(l)
+#N 세로길이 = 행의개수, M 가로길이 = 열의 개수
+visited = [[[0, 0] for _ in range(M)]for _ in range(N)]
+
+visited[0][0][0] = 1
+
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
+# visited[0] -> 벽을 안 부순 경우, visited[1] -> 벽을 부순경우
+# 최단경로를 찾아라.
+def bfs():
+    q = deque([(0, 0, 0)])
+    while q:
+        x, y, w = q.popleft()
+        if x == N-1 and y == M-1:
+            return visited[x][y][w]
+        for i in range(4):
+            nx = x + dx[i]
+            ny = y + dy[i]
+            if 0 <= nx < N and 0 <= ny < M and visited[nx][ny][w] == 0 and graph[nx][ny] == 0:
+                visited[nx][ny][w] = visited[x][y][w] + 1
+                q.append((nx, ny, w))
+            if w == 0:
+                if 0 <= nx < N and 0 <= ny < M and visited[nx][ny][w+1] == 0 and graph[nx][ny] == 1:
+                    visited[nx][ny][w+1] = visited[x][y][w] + 1
+                    q.append((nx, ny, w+1))
+    return -1
+print(bfs())
+
+삼차원 배열을 초기화 할 때는 리스트 형태로 생각하는게 편하다.
+
+또한 bfs 특성상 시작 노드에서 가까운 노드부터 점차 멀어지면서 방문한다.
+이 과정에서 각 노드는 처음 방문할 때 제일 짧은 거리이다. 
