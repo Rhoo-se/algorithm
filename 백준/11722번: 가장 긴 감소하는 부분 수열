@@ -1,0 +1,30 @@
+from sys import stdin
+from collections import deque
+import sys
+import bisect
+
+input = sys.stdin.readline
+
+N = int(input().strip())
+arr = list(map(int, input().split()))
+
+arr.reverse()
+dp = [arr[0]]
+
+for i in range(N):
+    if arr[i] > dp[-1]:
+        dp.append(arr[i])
+    else:
+        idx = bisect.bisect_left(dp, arr[i])
+        dp[idx] = arr[i]
+print(len(dp))
+
+
+"""
+가장 긴 증가하는 부분수열에서는 증가하는 순으로 dp에 저장하기에 자동적으로 오름차순으로 저장이된다.
+따라서 bisect를 이용하여 구현할 수 있지만
+가장 긴 감소하는 부분수열은 dp가 오름차순으로 정렬되어있지 않기에 bisect를 사용할 수 없다.
+
+위의 코드처럼 입력 리스트를 뒤집어 오름차순을 구하거나
+이진탐색의 O(logN)를 포기하고 O(N)으로 내부 반복문을 일일이 비교해 주면 된다.
+"""
