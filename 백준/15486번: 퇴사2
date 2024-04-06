@@ -1,0 +1,29 @@
+from sys import stdin
+from collections import deque
+import sys
+import bisect
+
+input = sys.stdin.readline
+N = int(input().strip())
+
+T = [0] * (N+1)
+P = [0] * (N+1)
+dp = [0] * (N+2)
+
+for i in range(1, N+1):
+    a, b = map(int, input().split())
+    T[i] = a
+    P[i] = b
+    
+for i in range(N, 0, -1):
+    if i + T[i] > N+1 :
+        dp[i] = dp[i+1]
+    else:
+        dp[i] = max(P[i] + dp[i+T[i]], dp[i+1])
+print(dp[1])
+"""
+dp 배열이 의미하는건 무엇일까?
+해당 날짜에 얻을 수 있는 최대 수익?
+만약 일을 안하게 되면 이전의 dp값과 같겠지
+그러나 일을 하게 된다면 현재의 수익 + 상담기간이후에 얻을 수 있는 dp값이 최대값이 될 것이다.
+"""
