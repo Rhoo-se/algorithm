@@ -1,0 +1,98 @@
+import sys
+import bisect
+from collections import deque
+
+input = sys.stdin.readline
+
+N = int(input().strip())
+graph = []
+visited = []
+sec = 0
+dx = [-1, 0, 0, 1] # 상 좌 우 하로 움직여야 조건 만족인줄 알았는데 아니었음
+dy = [0, -1, 1, 0]
+shark = -1
+
+for i in range(N):
+    l = list(map(int, input().strip().split()))
+    graph.append(l)
+    if 9 in l:
+        shark = [i, l.index(9), 2, 0]
+visited = [[0] * N for _ in range(N)]
+#상어가 있는 자리는 빈칸과 같다.
+graph[shark[0]][shark[1]] = 0
+visited[shark[0]][shark[1]] = 1
+if shark == -1:
+    print("no shark")
+    exit(1)
+
+q = deque([(shark[0], shark[1], shark[2], shark[3])])
+tq = deque()
+def bfs():
+    global sec
+    while q:
+        while q:
+            x, y, size, crt = q.popleft()
+            for i in range(4):
+                nx = x + dx[i]
+                ny = y + dy[i]
+                if 0 <= nx < N and 0 <= ny < N:
+                    # 아예 못 지나가는 경우
+                    if graph[nx][ny] > size or visited[nx][ny] != 0:
+                        continue
+                    # 크기와 관계없이 지나갈 수 있으면 일단 tq 데크에 담아둔다.
+                    # 이 때, tq에는 현재위치로부터 같은 거리의 좌표가 모두 담긴다.
+                    if graph[nx][ny] <= size and visited[nx][ny] == 0:
+                        visited[nx][ny] = visited[x][y] + 1
+                        tq.append((nx, ny, size, crt))
+        # 어떤 먹이를 먹을지 결정하는 반복문
+        while tq:
+            tx, ty, size, crt = tq.popleft()
+            # 먹이의 좌표를 임시로 설정
+            fx = 21
+            fy = 21
+            # 같은 거리의 좌표 중에서 먹이를 발견하면,
+
+            if graph[tx][ty] < size and graph[tx][ty] != 0:
+                # 남아있는 tq의 좌표를 모두 살핀 후 상 좌 우 하 순서로 선택.
+                tq.append((tx, ty, size, crt))
+                while tq:
+                    a, b, c, d = tq.popleft()
+                    # 애초에 tq에 넣을 때, 0 이거나 사이즈가 같은것을 안넣었으면
+                    # 이 조건문이 필요 없었을텐데,,?
+                    if graph[a][b] == 0 or graph[a][b] >= size:
+                        continue
+                    if a < fx:
+                        fx = a
+                        fy = b
+                    if a == fx:
+                        if b < fy:
+                            fy = b
+
+                graph[fx][fy] = 0
+                crt += 1
+                sec += visited[fx][fy] - 1
+                # 물고기의 크기 조정
+                if size == crt:
+                    size += 1
+                    crt = 0
+
+                for i in range(N):
+                    for j in range(N):
+                        visited[i][j] = 0
+                visited[fx][fy] = 1
+                q.clear()
+                q.append((fx, fy, size, crt))
+            # 만약 크기가 같아 그냥 지나갈 수 있는 곳이면 그냥 q에 추가
+            if graph[tx][ty] == size or graph[tx][ty] == 0:
+                q.append((tx, ty, size, crt))
+bfs()
+print(sec)
+
+"""
+bfs 탐색시 우선순위가 있을 때 dx, dy 순서 뿐만이 아닌, 다른 기준으로 정렬할 수가 있어야 했다.
+그리고 생각해보면 굳이 복잡하게 deque를 두개 쓰지 않고, 반복문을 통해 bfs를 여러번 돌리면 될 수도 있을 거 같다.
+1. 현재의 크기를 가지고 bfs를 한다. 이 때, 먹을 게 있으면 모두 새로운 먹이리스트를 만들어 그곳에 시간과 좌표를 저장해 놓는다.
+2. 먹이리스트에 아무것도 없으면 종료
+3. 먹이리스트에 뭐가 있으면 해당 시간을 누적하여 더하고, 시간, x좌표, y좌표 순으로 정렬을 한다.(시간, x, y 모두 작을수록 왼쪽 위에 있는 것이니)
+4. 크기를 조정해주고, 해당 먹이 위치에서 bfs를 다시 시작한다.
+"""
