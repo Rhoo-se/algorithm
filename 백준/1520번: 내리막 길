@@ -1,0 +1,41 @@
+import sys
+import bisect
+from collections import deque
+import heapq
+
+sys.setrecursionlimit(10**9)
+input = sys.stdin.readline
+
+
+#세로, 가로
+M, N = map(int, input().split())
+graph = [list(map(int, input().split())) for _ in range(M)]
+dp = [[-1] * N for _ in range(M)]
+dx = [-1, 1, 0, 0] # 상하좌우
+dy = [0, 0, -1, 1]
+
+def dfs(x, y):
+    if x == M-1 and y == N-1:
+        return 1
+    
+    #이미 지나왔던 경로인 경우에는
+    if dp[x][y] != -1:
+        return dp[x][y]
+    
+    #아직 안 지나온 경로면
+    dp[x][y] = 0
+
+    for i in range(4):
+        nx = x + dx[i]
+        ny = y + dy[i]
+
+        if 0 <= nx < M and 0 <= ny < N and graph[nx][ny] < graph[x][y]:
+            dp[x][y] += dfs(nx, ny)
+
+    return dp[x][y]
+
+print(dfs(0, 0))
+# dfs는 종료조건을 설정해 줘야하는데, 제일 마지막 노드에 도착하는게 종료조건임.
+# 최단경로가 아니라 특정 기준으로 경로의 개수 찾아나가는 것은 dfs일 확률이 높다.
+# dp를 이용하여 시간을 단축할 수 있다.
+# 결국에는 재귀를 이용해야한 다는 점을 생각하고, 코딩을 해야하니 특정한 값 = dfs(a, b)와 같이 코딩을 해야한다.
