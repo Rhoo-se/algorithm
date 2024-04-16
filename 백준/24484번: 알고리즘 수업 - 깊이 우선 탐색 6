@@ -1,0 +1,45 @@
+import sys
+import bisect
+from collections import deque
+import heapq
+
+sys.setrecursionlimit(10**9)
+input = sys.stdin.readline
+
+# N->정점수, M->간선수, R->시작 정점
+N, M, R = map(int, input().split())
+
+graph = [[] for _ in range(N+1)]
+visited = [0] * (N+1)
+depth = [-1] * (N+1)
+order = 1
+def dfs(start, dep):
+    global order
+    depth[start] = dep
+    visited[start] = order
+    order += 1
+    for i in graph[start]:
+        if visited[i] == 0:
+            dfs(i, dep + 1)
+
+# 오름차순으로 방문
+
+for i in range(M):
+    u, v = map(int, input().split())
+    graph[u].append(v)
+    graph[v].append(u)
+
+for i in range(1, N+1):
+    graph[i].sort(reverse=True)
+dfs(R, 0)
+
+ans = 0
+for i in range(1, N+1):
+    ans += visited[i]*depth[i]
+print(ans)
+
+"""
+문제의 조건인 '내림차순'을 못봤다.
+또한 생각해보니 전역변수 order나 함수의 인자인 dep는 이 문제에서 같을 수 밖에 없는데, 
+어차피 시작지점 하나에서 한바퀴만 도는 것이기에 굳이 나눌 필요가 있었나 싶다.
+"""
