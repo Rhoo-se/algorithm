@@ -1,0 +1,81 @@
+import sys
+import bisect
+from collections import deque
+import heapq
+
+sys.setrecursionlimit(10**9)
+input = sys.stdin.readline
+INF = 1e9
+MAX = 100001
+
+N, K = map(int, input().split())
+
+distance = [INF] * (MAX)
+
+def dij(start):
+    q = []
+    heapq.heappush(q, (0, start))
+    distance[start] = 0
+    while q:
+        dist, now = heapq.heappop(q)
+        if distance[now] < dist:
+            continue
+        for a, b in ((1, now-1), (1, now+1), (0, now*2)):
+            if 0 <= b < MAX:
+                cost = dist + a
+                if cost < distance[b]:
+                    distance[b] = cost
+                    heapq.heappush(q, (cost, b))
+dij(N)
+
+print(distance[K])
+------------------------위는 다익스트라 아래는 bfs--------------------------
+import sys
+import bisect
+from collections import deque
+import heapq
+
+sys.setrecursionlimit(10**9)
+input = sys.stdin.readline
+INF = 1e9
+MAX = 100001
+N, K = map(int, input().split())
+add = [(1, -1), (1, 1), (0, 2)]
+distance = [INF] * (MAX)
+
+def bfs(start):
+    while q:
+        x = q.popleft()
+        for k in range(3):
+            if k == 2:
+                nx = x * add[k][1]
+            else:
+                nx = x + add[k][1]
+
+            if 0 <= nx < MAX:
+                if k == 2:
+                    if distance[x] < distance[nx]:
+                        distance[nx] = distance[x]
+                        q.append(nx)
+                else:
+                    if distance[x] + add[k][0] < distance[nx]:
+                        distance[nx] = distance[x] + add[k][0]
+                        q.append(nx)
+
+q = deque()
+q.append(N)
+distance[N] = 0
+bfs(N)
+
+print(distance[K])
+
+
+"""
+일단 최단경로 문제이므로
+bfs, 다익스트라 등을 떠올릴 수 있다.
+bfs로 풀 수도 있지만 각각의 가중치가 다르기에 다익스트라로 풀어봤다.
+중요한 점은 for문에서 튜플형식으로 각각의 값을 지정하여 반복문을 사용할 수 있다는 점이다.
+
+만약 bfs로 풀려고 하면, 움직이는 방법에 따라 가중치가 다르니 이를 반영해 주면 된다.
+3가지 경우 밖에 없어 가중치를 더해주는게 어렵진 않으나 일반적으로 가중치가 다를 경우에는 다익스트라 or 벨만포드를 쓰면 된다.
+"""
