@@ -1,0 +1,50 @@
+from sys import stdin
+from collections import deque
+import sys
+import bisect
+
+input = sys.stdin.readline
+sys.setrecursionlimit(10 ** 6)
+
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
+rst = 0
+graph = []
+N = int(input().strip())
+rst = 0
+visited = [[-1]*N for _ in range(N)]
+
+def dfs(i, j):
+
+    if visited[i][j] != -1:
+        return visited[i][j]
+
+    visited[i][j] = 1
+
+    for k in range(4):
+        nx = i + dx[k]
+        ny = j + dy[k]
+        if 0 <= nx < N and 0 <= ny < N and graph[i][j] < graph[nx][ny]:
+            visited[i][j] = max(visited[i][j], dfs(nx, ny) + 1)
+    return visited[i][j]
+
+for i in range(N):
+    l = list(map(int, input().split()))
+    graph.append(l)
+
+for a in range(N):
+    for b in range(N):
+        rst = max(rst, dfs(a, b))
+
+print(rst)
+
+"""
+dp + dfs 문제는 내리막길 문제에서 풀었던 기억이 있다.
+내리막길에서는 주어진 지점으로부터 주어진 좌표까지 가는 "경로의 개수" 를 물어봤으므로 dfs를 통해 재귀가 일어날 때 가지수만 계산해 주면 된다.
+그렇기에 dfs 내에서 경로의 개수를 반환하는 경우는 마지막 좌표에 도달하는 경우의 수밖에 없다.
+
+그러나 이번 문제는 특정한 점으로부터 다른 점까지의 "경로의 개수"가 아닌 "계속 탐색하여 조건을 만족하는 경로중 최댓값을 갖는 경우"를 찾아야 하므로
+dfs를 통해 재귀가 일어날 때 max를 통해 끊임없이 갱신해 주어야 한다.
+
+또한 dfs + dp는 이미 지나온 길에 대한 경우의수는 곧바로 반환해 주어야한다는 점을 잊지 말자.
+"""
