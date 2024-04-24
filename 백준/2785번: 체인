@@ -1,0 +1,41 @@
+import sys
+import bisect
+from collections import deque
+import heapq
+
+sys.setrecursionlimit(10**9)
+input = sys.stdin.readline
+
+N = int(input().strip())
+L = list(map(int, input().split()))
+
+L.sort()
+q = deque(L)
+ans = 0
+
+left_chains = N-1
+
+while True:
+    x = q.popleft()
+    while x != 0:
+        if left_chains <= 0:
+            break
+        x -= 1
+        left_chains -= 1
+        if x == 0:
+            left_chains -= 1
+        ans += 1
+    if left_chains <= 0:
+        break
+
+print(ans)
+
+"""
+입력예시 중 이해가 안가는 예시가 있어 이해하는데 좀 걸렸다.
+또한 그리디 문제는 작동방식만 파악하면 과정 그대로 코딩만 하면된다.
+또한 이 문제와 같이 변수를 조건에 따라 조절해야하는 문제는 그 과정에서 논리적인 오류가 발생할 가능성이 큰데,
+극단적인 케이스를 생각하여 예외범위를 찾아줘야한다.
+나는 차근차근 연산을 했다고 생각했지만 특수한 경우에 조건이 갈려 원하지 않는 연산을 진행할 수도 있기 때문이다.
+또한 IndexError는 q가 비어있을 때 pop할 경우 나타날 수 있고, NameError는 선언되지 않은 함수 및 변수를 사용했을 때 나타난다.
+import를 안해주어 deque를 사용하는 경우도 그렇고.
+"""
