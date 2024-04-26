@@ -1,0 +1,47 @@
+import sys
+import bisect
+from collections import deque
+import heapq
+
+sys.setrecursionlimit(10**9)
+input = sys.stdin.readline
+
+S = input().strip()
+N = int(input().strip())
+A = [input().strip() for _ in range(N)]
+dp = [False] * (len(S) + 1)
+dp[0] = True
+
+for i in range(len(S)):
+    if dp[i]:
+        for a in A:
+            if S[i:i+len(a)] == a:
+                dp[i+len(a)] = True
+
+if dp[len(S)]:
+    print(1)
+else:
+    print(0)
+
+
+"""
+처음 생각
+1. bool list [False] * len(S)생성. (a를 이용하여 완성된 문자열을 만들면 모두 True가 되도록)
+2. 만약 A의 원소인 a가 S에 포함되고, S에 a가 포함되는 인덱스 구간의 bool list 값이 Fasle인 경우에만 True로 바꿈 ('abcd'를 만드는데, 'abc', 'bcd'로는 못만들게)
+3. 만약 bool list가 전부 True면 1을 반환, 아니면 0을 반환
+1~3 과정에서 예외처리를 해주어야 하는 부분 
+  ㄱ. S에 같은 문자열이 여러번 나타날 때 a가 포함되는 모든 인덱스 구간을 True로 설정해 주어야함.
+      즉, find 메소드를 사용하면 맨 앞에 나타나는 첫번째 문자열만 구해주므로, 반복문과 find메소드의 index를 동해 계속 반복해서 찾아야한다는 것.
+  ㄴ. 만약 S = 'aba', A의 원소가 'a', 'ba'인 경우, ㄱ에 따라서 S[2]의 a가 True로 바뀌어 1을 출력해야함에도 0을 출력하게 됨. 
+      그러면 일일이 조건을 계산해주어야 한다는 뜻이니... 시간복잡도가 너무 증가하게됨
+
+해설
+1. dp를 이용하여 겹치는 부분을 따로 계산할 필요 없이 효율적으로 코딩이 가능.
+2. for i in range(len(S):
+    if dp[i]:
+      for a in A:
+        if S[i:i+len(a)] == a:
+          dp[i+len(a)] = True
+  위와 같이, S[0]부터 S안에 a가 포함될 경우, dp의 값을 True로 바꾸어주어 모든 조건이 완성되었을 때 dp[len(S)] == True가 되는지 확인만 하면 됨.
+"""
+        
