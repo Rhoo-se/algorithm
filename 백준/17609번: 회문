@@ -1,0 +1,44 @@
+import sys
+import bisect
+from collections import deque
+import heapq
+
+sys.setrecursionlimit(10**9)
+input = sys.stdin.readline
+
+def is_pal(s, start, end):
+    while start < end:
+        if s[start] != s[end]:
+            return False
+        start += 1
+        end -= 1
+    return True
+def sol(s):
+    start, end = 0, len(s)-1
+    while start <= end:
+        if s[start] != s[end]:
+            left = is_pal(s, start+1, end)
+            right = is_pal(s, start, end-1)
+            if left or right:
+                return 1
+            else:
+                return 2
+        start += 1
+        end -= 1
+    return 0
+
+
+N = int(input().strip())
+for i in range(N):
+    s = input().strip()
+    print(sol(s))
+
+"""
+처음엔 양쪽에서 포인터를 설정하여 회문이 안되면 왼쪽 삭제, 그래도 안되면 오른쪽 삭제를 하자. 라는 생각으로 코딩을 하였음.
+그러나 'axaaxaa와 같이 start = x, end = a일 경우 start가 아닌 end를 삭제해야 회문이 되는 경우가 있기에
+기본적으로 회문 관련 알고리즘은 삭제의 순서를 고려하는 경우도 생각했어야 했다.
+
+그러나 이 반례를 생각하지 못했고, 결국 재귀함수를 통해 구현할 수 있다는 힌트를 얻어
+회문이 안될경우 한쪽씩 삭제하여 둘 중에 하나라도 회문이 되면 okay 되는거니까,,,, 
+이렇게 코딩 하였음
+"""
