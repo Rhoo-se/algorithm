@@ -1,0 +1,43 @@
+import sys
+
+
+input = sys.stdin.readline
+INF = int(1e9)
+# V 마을, E 도로
+V, E = map(int, input().split())
+
+town = [[INF] * (V+1) for _ in range(V+1)]
+
+for i in range(E):
+    a, b, c, = map(int, input().split())
+    town[a][b] = c
+
+for k in range(1, V+1):
+    for i in range(1, V+1):
+        for j in range(1, V+1):
+            town[i][j] = min(town[i][j], town[i][k] + town[k][j])
+
+min_cycle = INF
+for i in range(1, V+1):
+    min_cycle = min(min_cycle, town[i][i])
+    
+if min_cycle == INF:
+    print(-1)
+else:
+    print(min_cycle)
+
+
+"""
+중요한 점 : 플로이드 워셜은 이미 최단거리가 고려된 값이다. 이 뜻은 임의의 지점 a-b까지 가는데 거쳐갈 수 있는 모든 경우의수를 고려해서
+그중 최소 비용을 담았다는 것.
+만약 플로이드워셜로 최소비용을 담은 그래프를 완성했다면, 이 곳에서 한 지점에서 출발하여 다시 출발지점으로 돌아오는 모든 경우들에서의 최소비용은 어떻게 구할 수 있을까?(싸이클)
+이는 town[i][j] + town[j][i]를 반복적으로 계산하여 그 중 최소의 값을 생각할 수 있음. 
+왜냐하면 이 경우에 겉으로 볼 땐 두 개의 지점을 지나는 것처럼 보이지만
+사실상 이미 i-j까지 갈 때 중간에 몇개의 도시를 거쳐가든지의 모든 경우의 수를 담아놓은 것이고,
+그 중 최소비용을 담아 놓은것이기에, 이미 고려된것임.
+따라서 혼자 이상하게 생각하지말자
+"""
+
+"""
+추가로 백준 문제 풀 때 sys.setrecursionlimit 써놓았다가 메모리 초과될 줄은 몰랐네,,, 필요한 거만 써놓자
+"""
