@@ -1,0 +1,46 @@
+import sys
+import bisect
+from collections import deque
+import heapq
+
+INF = int(1e9)
+input = sys.stdin.readline
+
+
+def bell(start, V, E):
+    distance[start] = 0
+    for i in range(V):
+        for j in range(E):
+            cur_node = edges[j][0]
+            next_node = edges[j][1]
+            edge_cost = edges[j][2]
+            if distance[next_node] > distance[cur_node] + edge_cost:
+                distance[next_node] = distance[cur_node] + edge_cost
+                if i == V-1:
+                    return True
+    return False
+
+TC = int(input().strip())
+#N 지점 수, M 도로수, W 웜홀 수
+for _ in range(TC):
+    N, M, W = map(int, input().split())
+    edges = []
+    distance = [INF] * (N+1)
+
+    for _ in range(M):
+        #S 도로 출발점, E 도로 끝점, T 걸리는 시간
+        S, E, T = map(int, input().split())
+        edges.append((S, E, T))
+        edges.append((E, S, T))
+    for _ in range(W):
+        #S 웜홀 출발점, E 웜홀 끝점, T 줄어드는 시간
+        S, E, T = map(int, input().split())
+        edges.append((S, E, -T))
+    if bell(1, N, len(edges)) == True:
+        print('YES')
+    else:
+        print('NO')
+        
+"""
+벨만포드는 음의간선 사이클도 확인가능하고, 모든 노드를 돌았을 때도 값이 갱신이 계속 일어나면 음의사이클이 있다는 뜻.
+"""
