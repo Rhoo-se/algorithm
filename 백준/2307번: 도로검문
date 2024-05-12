@@ -1,0 +1,86 @@
+import sys
+import bisect
+from collections import deque
+import heapq
+
+sys.setrecursionlimit(10**9)
+input = sys.stdin.readline
+INF = int(1e9)
+# 제일 먼저 최소 탈출 시간을 구하고
+# 도로 없애고 그때의 탈출속도 - 최소 탈출 시간 = 최대 지연시간
+# 최대 지연시간의 최대값을 계속 갱신
+
+# 노드 N, 엣지 M
+N, M = map(int, input().split())
+graph = [deque([]) for _ in range(N+1)]
+distance = [INF] * (N+1)
+road_info = []
+prev_node = [0]*(N+1)
+ans = -1
+for i in range(M):
+    a, b, t = map(int, input().split())
+    graph[a].append((b, t))
+    graph[b].append((a, t))
+    road_info.append((a, b, t))
+def dij(start):
+    q = []
+    heapq.heappush(q, (0, start))
+    distance[start] = 0
+    while q:
+        dist, now = heapq.heappop(q)
+        if distance[now] < dist:
+            continue
+        for i in graph[now]:
+            cost = dist + i[1]
+            if cost < distance[i[0]]:
+                distance[i[0]] = cost
+                prev_node[i[0]] = now
+                heapq.heappush(q, (cost, i[0]))
+
+def re():
+    for i in range(N+1):
+        distance[i] = INF
+
+dij(1)
+#최소 탈출 시간
+min_minutes = distance[N]
+
+#도로 하나씩 빼보자
+min_path = []
+min_route = []
+current_node = N
+while current_node != 0:
+    min_path.append(current_node)
+    current_node = prev_node[current_node]
+min_path.reverse()
+
+for i in range(len(min_path) - 1):
+    min_route.append((min_path[i], min_path[i+1]))
+
+for edge in min_route:
+    a, b = edge
+    remove_weight = next(weight for (x, y, weight) in road_info if (x, y) == (a, b) or (x, y) == (b, a))
+    graph[a] = deque([(node, weight) for node, weight in graph[a] if node != b])
+    graph[b] = deque([(node, weight) for node, weight in graph[b] if node != a])
+
+    re()
+    dij(1)
+
+    if distance[N] == INF:
+        print(-1)
+        exit(0)
+    ans = max(ans, distance[N] - min_minutes)
+    graph[a].append((b, remove_weight))
+    graph[b].append((a, remove_weight))
+    re()
+
+print(ans)
+
+#아, 최단경로를 구할 때 지나가는 도로만 제거해보면 되는구나.
+
+"""
+도로를 하나씩 제거하기 위해서 지나온 경로를 찾아야함.
+이 때, 경로를 저장할 수 있는 새로운 배열을 노드의 수와 같게 선언.
+최소 비용이 갱신될 때 마다 새로운 배열에 해당 노드값을 이전에 있던 노드의 번호를 저장(now).
+그러면 반복문을 통해 경로를 역추적할 수 있음.
+"""
