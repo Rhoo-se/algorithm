@@ -1,0 +1,53 @@
+import heapq
+import sys
+import math
+
+sys.setrecursionlimit(10**9)
+input = sys.stdin.readline
+
+def find_parent(parent, x):
+    if parent[x] == x:
+        return parent[x]
+    parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+
+
+def union_parent(parent, x, y):
+    a = find_parent(parent, x)
+    b = find_parent(parent, y)
+    if a < b:
+        parent[b] = a
+    else:
+        parent[a] = b
+
+N = int(input().strip())
+edges = []
+stars = []
+parent = [i for i in range(N+1)]
+
+for i in range(N):
+    x, y = map(float, input().split())
+    stars.append((x, y))
+
+for i in range(N):
+    for j in range(i+1, N):
+        d = ((stars[i][0] - stars[j][0]) ** 2 + (stars[i][1] - stars[j][1]) ** 2) ** (1/2)
+        edges.append((d, i, j))
+edges.sort()
+rst = 0
+for edge in edges:
+    cost, a, b = edge
+    if find_parent(parent, a) == find_parent(parent, b):
+        continue
+    union_parent(parent, a, b)
+    rst += cost
+print(f'{rst:.2f}')
+
+
+"""
+생각을 잘못했다.
+모든 점들 사이의 거리를 구할 때 가짓수의 경우는 N이 100이라 가정하면
+100 + 99 + 98 + .... 0인데 왜 100!이라고 생각했지;;
+따라서 거리값을 cost로 간단하게 정할 수 있고, 스패닝 트리에서의 두 점 사이의 간선은 한 방향만 고려해도 괜찮다.
+f-string의 포맷을 숙지하자
+"""
