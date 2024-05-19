@@ -1,0 +1,67 @@
+import sys
+from collections import deque
+input = sys.stdin.readline
+
+
+#(6, 13) 올해는 6위가 순위 더 높다는 뜻 작년에는 아니었고.
+
+# 확실한 순위를 찾을 수 없는경우 -> 진입차수가 0인게 여러개 있는 경우겠지.
+
+# 올해 순위 만들수 없는 경우, 일관성이 없는 잘못된 정보 -> 사이클 발생?
+# 위상정렬은 진입차수가 0인 노드가 큐에 들어가야하는데,
+# 사이클 안에 있는 원소는 진입차수가 0이 될 수 없음
+
+def topology_sort():
+    q = deque()
+    rst = []
+    for i in range(1, n+1):
+        if indegree[i] == 0:
+            q.append(i)
+    while q:
+
+        now = q.popleft()
+        rst.append(now)
+        for i in graph[now]:
+            indegree[i] -= 1
+            if indegree[i] == 0:
+                q.append(i)
+        if len(q) > 1:
+            print("?")
+            return
+    if len(rst) != n:
+        print("IMPOSSIBLE")
+        return
+    return print(" ".join(map(str, rst)))
+
+T = int(input().strip())
+
+for _ in range(T):
+    n = int(input().strip())
+    t = list(map(int, input().split()))
+    m = int(input().strip())
+    c_r = []
+    indegree = [0] * (n + 1)
+    graph = [[] for _ in range(n+1)]
+
+    for i in range(n - 1):
+        for j in range(i + 1, n):
+            graph[t[i]].append(t[j])
+            indegree[t[j]] += 1
+
+    for i in range(m):
+        a, b = map(int, input().split())
+        if b in graph[a]:  # b가 a보다 순위가 낮은 경우, 순위가 바뀜
+            graph[a].remove(b)
+            graph[b].append(a)
+            indegree[a] += 1
+            indegree[b] -= 1
+        else:  # a가 b보다 순위가 낮은 경우, 순위가 바뀜
+            graph[b].remove(a)
+            graph[a].append(b)
+            indegree[b] += 1
+            indegree[a] -= 1
+    topology_sort()
+
+"""
+사이클이 발생할 경우의 문제. 
+"""
