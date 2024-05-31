@@ -1,0 +1,38 @@
+import sys
+from collections import deque
+
+input = sys.stdin.readline
+S = int(input().strip())
+
+def bfs(start, end):
+    q = deque([(1, 0, 0)])
+    visited = [[False] * (S+1) for _ in range(S+1)]
+    visited[start][0] = True
+
+    while q:
+        screen, clipboard, time = q.popleft()
+        if screen == end:
+            return time
+        # 화면의 모든 이모티콘 클립보드에 저장
+        if not visited[screen][screen]:
+            visited[screen][screen] = True
+            q.append((screen, screen, time + 1))
+        # 클립보드의 내용을 화면에 붙여넣기
+        if screen+clipboard <= S and clipboard > 0 and not visited[screen+clipboard][clipboard]:
+            visited[screen+clipboard][clipboard] = True
+            q.append((screen+clipboard, clipboard, time + 1))
+        # 이모티콘 하나 삭제
+        if screen > 0 and not visited[screen-1][clipboard]:
+            visited[screen-1][clipboard] = True
+            q.append((screen-1, clipboard, time + 1))
+
+print(bfs(1, S))
+
+
+"""
+bfs를 통해서 상태관리를 해야한다는 것은 알았는데, 화면의 상태와 클립보드의 상태를 따로 나눠서 관리해 줘야한다는 생각은 하지 못했다.
+bfs는 너비우선이기에 항상 같은 레벨에 있는 노드는 동시에 상태관리가 진행되어야하고,
+이 경우에는 한 상태에서 취할수 있는 행동이 3가지이니 이 3가지가 동시에 이루어지도록 코딩을 해야겠지.
+그런데 저장, 붙여넣기, 삭제의 과정은 화면의 이모티콘수와 클립보드에 저장되어있는 이모티콘의 수에 영향을 각각주니 따로 나누어서 관리를 해야겠다 생각할 수 있어.
+이중리스트를 만드는 것을 꺼려하지말고 적극적으로 채용해보자
+"""
