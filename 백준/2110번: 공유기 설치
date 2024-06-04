@@ -1,0 +1,46 @@
+import heapq
+import sys
+import math
+from collections import deque
+import bisect
+
+input = sys.stdin.readline
+
+N, C = map(int, input().split())
+home = []
+for _ in range(N):
+    home.append(int(input().strip()))
+home.sort()
+
+left = 1
+right = home[-1] - home[0]
+
+while left <= right:
+    mid = (left + right) // 2
+    crt = home[0]
+    cnt = 1
+
+    for i in range(1, N):
+        if home[i] >= mid + crt:
+            crt = home[i]
+            cnt += 1
+
+    if cnt >= C:
+        left = mid + 1
+        rst = mid
+    else:
+        right = mid - 1
+print(rst)
+
+"""
+가장 인접한 공유기의 거리가 최대가 되어야한다 <<< 이 문구를 본 순간 이진탐색을 통해 공유기의 설치 간격을 결정해야겠다 라고 생각을 할 수 있어야한다.
+특히 left, right를 통해 mid를 결정하면 이를 토대로 몇개의 공유기를 설치할 지 구할 수 있다.
+이 때 공유기의 개수를 보고 "mid 간격으로 공유기를 설치 했더니 공유기의 개수가 C보다 많이 나왔네? 그러면 간격을 좀 더 넓힐 수 있겠네. mid의 값을 좀 키워볼까?"
+그러고 mid의 값을 키워서 다시 탐색을 했더니 "공유기의 개수가 C보다 작게 나오네. 그러면 mid의 값을 다시 조정해 봐야겠다.
+만약 공유기의 개수가 C와 같게 나왔으면, "조금 더 간격을 늘려도 C가 나올 수 있을텐데,,, mid값을 조정해서 다시 키워볼까? 이 경우는 C보다 많이 나온 경우에 포함시키자.
+혹시라도 이 값이 최대간격일 경우일 수 있으니 결과에 미리 저장해 놓자(line 30 : rst = mid)"
+위와 같은 생각의 흐름이 자연스럽게 진행 되어야한다.
+
+이진탐색은 간격을 수시로 조정하면서 값을 금방 찾아나갈 수 있다는 것을 생각해야 함.
+mid의 값이 생각보다 너무 작은데? 너무 큰데? 이런 생각은 안해도 됨 알아서 와리가리하면서 조정되니까. 
+"""
