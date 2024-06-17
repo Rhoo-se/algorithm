@@ -1,0 +1,85 @@
+import heapq
+import sys
+import math
+from collections import deque
+import bisect
+
+input = sys.stdin.readline
+
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
+
+# .비어있고, * 물차있고, X 돌있고, D 비버굴, S 시작위치
+
+def flow():
+    global water
+    while water:
+        wx, wy = water.popleft()
+        for i in range(4):
+            nwx, nwy = wx + dx[i], wy + dy[i]
+            if 0 <= nwx < R and 0 <= nwy < C:
+                if graph[nwx][nwy] == '.':
+                    graph[nwx][nwy] = '*'
+                    new_water.append((nwx, nwy))
+                else:
+                    continue
+    water = deque(new_water)
+    new_water.clear()
+
+    return
+
+def bfs():
+    global time
+    global q
+    global check
+    while True:
+        flow()
+        while q:
+            sx, sy = q.popleft()
+            for i in range(4):
+                nsx, nsy = sx + dx[i], sy + dy[i]
+                if 0 <= nsx < R and 0 <= nsy < C:
+                    if graph[nsx][nsy] == '.':
+                        graph[nsx][nsy] = 'X'
+                        new_q.append((nsx, nsy))
+
+                    if graph[nsx][nsy] == 'D':
+                        time += 1
+                        check = True
+                        return
+
+                    if graph[nsx][nsy] == 'X' or graph[nsx][nsy] == '*':
+                        continue
+
+        if len(q) == 0 and len(new_q) == 0:
+            
+            return
+
+        if len(q) == 0:
+            q = deque(new_q)
+            new_q.clear()
+            time += 1
+
+
+R, C = map(int, input().split())
+graph = []
+time = 0
+water = deque()
+new_water = deque()
+q = deque()
+new_q = deque()
+check = False
+for i in range(R):
+    l = list(input().strip())
+    for j in range(C):
+        if l[j] == 'S':
+            q.append((i, j))
+        if l[j] == '*':
+            water.append((i, j))
+    graph.append(l)
+bfs()
+print(time if check else "KAKTUS")
+
+"""
+디버깅하려고 그래프를 중간에 출력했는데 왜 출력오류가 안뜨고 틀렸습니다가 나오냐고...
+"""
