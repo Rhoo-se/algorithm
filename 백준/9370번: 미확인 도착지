@@ -1,0 +1,69 @@
+import heapq
+import sys
+import math
+from collections import deque
+import bisect
+
+input = sys.stdin.readline
+INF = int(1e9)
+
+# 다익스트라로 시작지점으로부터 최단거리를 갱신하고,
+# 그 때의 경로를 저장해서 g와 h가 포함되며 목적지 후보안에 있으면 정답을 구할 수 있네.
+
+
+def dij(start):
+    distance = [INF] * (n+1)
+    distance[start] = 0
+    q = []
+    heapq.heappush(q, (0, start))
+    while q:
+        dist, now = heapq.heappop(q)
+        if distance[now] < dist:
+            continue
+        for i in graph[now]:
+            cost = dist + i[1]
+            if cost < distance[i[0]]:
+                distance[i[0]] = cost
+                heapq.heappush(q, (cost, i[0]))
+    return distance
+
+T = int(input().strip())
+for _ in range(T):
+    # n:교차로 개수, m:도로 개수, t:목적지 후보 개수
+    n, m, t = map(int, input().split())
+    ex_dest = []
+    # s:출발지, g와 h 교차로 사이에 있는 도로 지나감
+    # 즉, g,h 사이 도로를 지나면서 목적지 후보중 최단거리를 오름차순으로 정렬하여 출력.
+    s, g, h = map(int, input().split())
+
+    graph = [[] for _ in range(n+1)]
+    # a,b 사이에 길이 d의 도로 존재.
+    for i in range(m):
+        a, b, d = map(int, input().split())
+        graph[a].append((b, d))
+        graph[b].append((a, d))
+    for i in range(t):
+        x = int(input().strip())
+        ex_dest.append(x)
+
+    dist_s = dij(s)
+    dist_g = dij(g)
+    dist_h = dij(h)
+    ans = []
+    for dest in ex_dest:
+        direct = dist_s[dest]
+        # s-g-h-dest / s-h-g-dest 비교
+        d1 = dist_s[g] + dist_g[h] + dist_h[dest]
+        d2 = dist_s[h] + dist_h[g] + dist_g[dest]
+        if direct == d1 or direct == d2:
+            ans.append(dest)
+    ans.sort()
+    print(" ".join(map(str, ans)))
+
+
+"""
+처음에는 단순 다익스트라를 통해서 나온 목적지까지의 최단거리중에
+g-h를 지나는 경로가 있으면 정답인 줄 알았음.
+그러나 다익스트라의 구현 방식에 따라 g-h를 지나는 최단거리 말고 다른 최단거리도 있다는 것을 놓쳤고, 직접 비교해줘야하는 걸 알게됨
+따라서 s-g-h-목적지 / s-h-g-목적지로 경우의 수를 나눠 이 값들이 s-목적지로 구한 최단경로값과 같은걸 구하자
+"""
